@@ -307,6 +307,11 @@ function DashboardPanel() {
             <Link className="btn-secondary" href="/accounts">
               Accounts
             </Link>
+            {user?.role === "admin" && (
+              <Link className="btn-secondary" href="/admin">
+                Admin Panel
+              </Link>
+            )}
             <Link className="btn-secondary" href="/users">
               User Settings
             </Link>
