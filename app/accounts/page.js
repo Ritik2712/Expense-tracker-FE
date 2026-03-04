@@ -190,7 +190,12 @@ function AccountsPanel() {
 
       <SectionCard title={`Your Accounts (${accounts.length})`}>
         {loading ? (
-          <p className="muted">Loading accounts...</p>
+          <div className="space-y-2">
+            <div className="skeleton h-9 w-full" />
+            <div className="skeleton h-9 w-full" />
+            <div className="skeleton h-9 w-full" />
+            <div className="skeleton h-9 w-full" />
+          </div>
         ) : accounts.length === 0 ? (
           <p className="muted">No accounts found.</p>
         ) : (

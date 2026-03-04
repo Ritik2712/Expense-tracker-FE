@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
+import PageSkeleton from "@/components/PageSkeleton";
 import SectionCard from "@/components/SectionCard";
 import { api, getErrorMessage } from "@/lib/api";
 import { clearStoredUser, getStoredUser } from "@/lib/auth";
@@ -55,11 +56,7 @@ function UserDetailsPanel() {
   }, [userId]);
 
   if (loading) {
-    return (
-      <main className="shell">
-        <p className="muted">Loading user details...</p>
-      </main>
-    );
+    return <PageSkeleton title="Loading User Details" rows={4} />;
   }
 
   return (

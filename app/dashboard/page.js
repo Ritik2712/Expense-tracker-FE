@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import PageSkeleton from "@/components/PageSkeleton";
 import SectionCard from "@/components/SectionCard";
 import { api, getErrorMessage } from "@/lib/api";
 import { clearStoredUser, getStoredUser } from "@/lib/auth";
@@ -266,11 +267,7 @@ function DashboardPanel() {
   };
 
   if (loading) {
-    return (
-      <main className="shell">
-        <p className="muted">Loading dashboard...</p>
-      </main>
-    );
+    return <PageSkeleton title="Loading Dashboard" rows={6} />;
   }
 
   return (

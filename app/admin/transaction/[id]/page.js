@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
+import PageSkeleton from "@/components/PageSkeleton";
 import SectionCard from "@/components/SectionCard";
 import { api, getErrorMessage } from "@/lib/api";
 import { clearStoredUser, getStoredUser } from "@/lib/auth";
@@ -59,11 +60,7 @@ function TransactionDetailsPanel() {
   }, [transactionId]);
 
   if (loading) {
-    return (
-      <main className="shell">
-        <p className="muted">Loading transaction details...</p>
-      </main>
-    );
+    return <PageSkeleton title="Loading Transaction Details" rows={4} />;
   }
 
   return (

@@ -68,4 +68,8 @@ button {
   .result-box {
     @apply mt-4 rounded-2xl border border-black bg-black p-4 text-xs text-white;
   }
+
+  .skeleton {
+    @apply animate-pulse rounded-md bg-black/10;
+  }
 }
