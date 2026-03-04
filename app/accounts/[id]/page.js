@@ -7,7 +7,7 @@ import AuthGuard from "@/components/AuthGuard";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import SectionCard from "@/components/SectionCard";
 import { api, getErrorMessage } from "@/lib/api";
-import { clearStoredUser, getStoredUser, setStoredUser } from "@/lib/auth";
+import { clearStoredUser, getStoredUser } from "@/lib/auth";
 
 const TX_PAGE_LIMIT = 100;
 const MAX_PAGES = 50;
@@ -94,19 +94,16 @@ function AccountDetailsPanel() {
     if (showRefresh) setRefreshing(true);
 
     try {
-      const [meRes, accountsRes] = await Promise.all([
-        api.get("/users/me"),
-        api.get("/accounts", { params: { page: 1, limit: 100 } }),
-      ]);
+      const accountsRes = await api.get("/accounts", {
+        params: { page: 1, limit: 100 },
+      });
 
-      const mergedUser = { ...activeUser, ...(meRes.data.user || {}) };
-      setStoredUser(mergedUser);
-      if (!mergedUser?.id) {
+      if (!activeUser?.id) {
         throw new Error("User session missing. Please login again.");
       }
 
-      setUserId(mergedUser.id);
-      const allTxs = await fetchAllUserTransactions(mergedUser.id);
+      setUserId(activeUser.id);
+      const allTxs = await fetchAllUserTransactions(activeUser.id);
 
       const accountList = Array.isArray(accountsRes.data)
         ? accountsRes.data
@@ -259,9 +256,16 @@ function AccountDetailsPanel() {
 
       {!account ? (
         <SectionCard title="Account">
-          <p className="muted">
-            This account does not exist or is not accessible.
-          </p>
+          {error ? (
+            <p className="muted">
+              Could not load account details right now. Use refresh to try
+              again.
+            </p>
+          ) : (
+            <p className="muted">
+              This account does not exist or is not accessible.
+            </p>
+          )}
         </SectionCard>
       ) : (
         <>

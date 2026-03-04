@@ -7,7 +7,7 @@ import AuthGuard from '@/components/AuthGuard';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import SectionCard from '@/components/SectionCard';
 import { api, getErrorMessage } from '@/lib/api';
-import { clearStoredUser, getStoredUser, setStoredUser } from '@/lib/auth';
+import { clearStoredUser, getStoredUser } from '@/lib/auth';
 
 function UserSettingsPanel() {
   const router = useRouter();
@@ -34,16 +34,8 @@ function UserSettingsPanel() {
     setError('');
     setSuccess('');
 
-    try {
-      const res = await api.get('/users/me');
-      const mergedUser = { ...activeUser, ...(res.data.user || {}) };
-      setStoredUser(mergedUser);
-      setUser(mergedUser);
-    } catch (err) {
-      setError(getErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
+    setUser(activeUser);
+    setLoading(false);
   };
 
   useEffect(() => {

@@ -7,10 +7,7 @@ import AuthGuard from "@/components/AuthGuard";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import SectionCard from "@/components/SectionCard";
 import { api, getErrorMessage } from "@/lib/api";
-import { clearStoredUser, getStoredUser, setStoredUser } from "@/lib/auth";
-
-const TX_PAGE_LIMIT = 100;
-const MAX_PAGES = 50;
+import { clearStoredUser, getStoredUser } from "@/lib/auth";
 
 function DashboardPanel() {
   const router = useRouter();
@@ -73,25 +70,6 @@ function DashboardPanel() {
     router.push("/login");
   };
 
-  const fetchAllUserTransactions = async (userId) => {
-    const all = [];
-
-    for (let page = 1; page <= MAX_PAGES; page += 1) {
-      const res = await api.get("/transactions/user/all", {
-        params: { page, limit: TX_PAGE_LIMIT },
-      });
-
-      const batch = Array.isArray(res.data) ? res.data : [];
-      all.push(...batch);
-
-      if (batch.length < TX_PAGE_LIMIT) {
-        break;
-      }
-    }
-
-    return all;
-  };
-
   const fetchDashboardData = async ({ showRefresh = false } = {}) => {
     const activeUser = getStoredUser();
     if (!activeUser?.token) {
@@ -105,26 +83,31 @@ function DashboardPanel() {
     if (showRefresh) setRefreshing(true);
 
     try {
-      const [meRes, accountsRes] = await Promise.all([
-        api.get("/users/me"),
-        api.get("/accounts", { params: { page: 1, limit: 100 } }),
-      ]);
+      const res = await fetch("/api/dashboard", {
+        headers: {
+          Authorization: `Bearer ${activeUser.token}`,
+        },
+        cache: "no-store",
+      });
 
-      const mergedUser = { ...activeUser, ...(meRes.data.user || {}) };
-      if (!mergedUser?.id) {
+      const payload = await res.json();
+      if (!res.ok) {
+        throw new Error(getErrorMessage({ response: { data: payload } }));
+      }
+
+      if (!activeUser?.id) {
         throw new Error("User session missing. Please login again.");
       }
 
-      const txs = await fetchAllUserTransactions(mergedUser.id);
-
-      setStoredUser(mergedUser);
-      setUser(mergedUser);
-
-      const fetchedAccounts = Array.isArray(accountsRes.data)
-        ? accountsRes.data
+      setUser(activeUser);
+      const fetchedAccounts = Array.isArray(payload.accounts)
+        ? payload.accounts
+        : [];
+      const fetchedTransactions = Array.isArray(payload.transactions)
+        ? payload.transactions
         : [];
       setAccounts(fetchedAccounts);
-      setTransactions(txs);
+      setTransactions(fetchedTransactions);
 
       setForm((prev) => ({
         ...prev,

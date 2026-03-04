@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
 import SectionCard from "@/components/SectionCard";
 import { api, getErrorMessage } from "@/lib/api";
-import { clearStoredUser, getStoredUser, setStoredUser } from "@/lib/auth";
+import { clearStoredUser, getStoredUser } from "@/lib/auth";
 
 function formatCurrency(value) {
   return `$${Number(value || 0).toFixed(2)}`;
@@ -38,11 +38,7 @@ function TransactionDetailsPanel() {
     if (showRefresh) setRefreshing(true);
 
     try {
-      const meRes = await api.get("/users/me");
-      const mergedUser = { ...activeUser, ...(meRes.data.user || {}) };
-      setStoredUser(mergedUser);
-
-      if (mergedUser?.role !== "admin") {
+      if (activeUser?.role && activeUser.role !== "admin") {
         router.replace("/forbidden");
         return;
       }
@@ -106,7 +102,12 @@ function TransactionDetailsPanel() {
       )}
 
       <SectionCard title="Transaction">
-        {!transaction ? (
+        {error ? (
+          <p className="muted">
+            Could not load transaction details right now. Use refresh to try
+            again.
+          </p>
+        ) : !transaction ? (
           <p className="muted">Transaction not found.</p>
         ) : (
           <div className="space-y-2 text-sm">

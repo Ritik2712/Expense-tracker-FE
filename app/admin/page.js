@@ -7,7 +7,7 @@ import AuthGuard from "@/components/AuthGuard";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import SectionCard from "@/components/SectionCard";
 import { api, getErrorMessage } from "@/lib/api";
-import { clearStoredUser, getStoredUser, setStoredUser } from "@/lib/auth";
+import { clearStoredUser, getStoredUser } from "@/lib/auth";
 
 function extractList(data) {
   if (Array.isArray(data)) return data;
@@ -54,12 +54,9 @@ function AdminPanel() {
     if (showRefresh) setRefreshing(true);
 
     try {
-      const meRes = await api.get("/users/me");
-      const mergedUser = { ...activeUser, ...(meRes.data.user || {}) };
-      setStoredUser(mergedUser);
-      setMe(mergedUser);
+      setMe(activeUser);
 
-      if (mergedUser?.role !== "admin") {
+      if (activeUser?.role && activeUser.role !== "admin") {
         router.replace("/forbidden");
         return;
       }
