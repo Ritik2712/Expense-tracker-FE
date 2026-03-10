@@ -29,32 +29,28 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="w-full max-w-md rounded-2xl border border-black/15 bg-white p-6 shadow-lg shadow-black/10">
+    <div className="panel w-full max-w-md">
       <p className="mb-2 text-sm uppercase tracking-[0.2em] text-black/60">Expense Tracker</p>
       <h1 className="mb-1 text-3xl font-semibold tracking-tight text-black">Register User</h1>
       <p className="mb-6 text-sm text-black/60">Create a regular user account.</p>
 
       <form className="space-y-3" onSubmit={onSubmit}>
         <input
-          className="w-full rounded-lg border border-black/20 bg-white px-3 py-2 text-sm outline-none transition focus:border-black"
+          className="field"
           placeholder="Name"
           value={form.name}
           onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
           required
         />
         <input
-          className="w-full rounded-lg border border-black/20 bg-white px-3 py-2 text-sm outline-none transition focus:border-black"
+          className="field"
           type="password"
           placeholder="Password"
           value={form.password}
           onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
           required
         />
-        <button
-          disabled={loading}
-          className="w-full rounded-lg border border-black bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-black/90 disabled:cursor-not-allowed disabled:opacity-50"
-          type="submit"
-        >
+        <button disabled={loading} className="btn-primary w-full" type="submit">
           {loading ? 'Creating...' : 'Create User'}
         </button>
       </form>

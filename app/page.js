@@ -16,5 +16,9 @@ export default function HomePage() {
     router.replace('/login');
   }, [router]);
 
-  return <p className="p-6">Loading...</p>;
+  return (
+    <main className="shell">
+      <p className="muted">Loading...</p>
+    </main>
+  );
 }

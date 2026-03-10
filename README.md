@@ -23,3 +23,18 @@ Backend URL is read from `NEXT_PUBLIC_API_URL` (default `.env.example` points to
 - Accounts: all CRUD routes
 - Transactions: all CRUD/list/get routes
 - Admin: all admin routes
+
+## SSR vs CSR Decision (Auth vs Dashboard)
+We intentionally split rendering strategy based on data needs:
+
+- Auth pages (login/register) are SSR/static-friendly.
+  These pages do not require any client-only data to render.
+  They can be served immediately without waiting for user tokens.
+
+- Dashboard and protected pages are CSR.
+  These screens require a user token to fetch and display data.
+  Our token is stored in `localStorage`, which is only available in the browser.
+  Because the server cannot access `localStorage`, these pages must render on the client
+  and fetch data after mount.
+
+If we later move the token to an `httpOnly` cookie, protected SSR becomes possible.

@@ -19,7 +19,11 @@ export default function AuthGuard({ children }) {
   }, [authResolved, isAuthenticated, router]);
 
   if (!authResolved || !ready) {
-    return <p className="p-6">Checking auth...</p>;
+    return (
+      <main className="shell">
+        <p className="muted">Checking auth...</p>
+      </main>
+    );
   }
 
   return children;
